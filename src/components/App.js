@@ -5,6 +5,7 @@ import Loader from "./Loader";
 import Error from "./Error";
 import StartScreen from "./StartScreen";
 import Question from "./Question";
+import FinnishScreen from "./FinnishScreen";
 
 const initialState = {
   questions: [],
@@ -32,6 +33,8 @@ function reducer(state, action) {
       }
     case 'nextQuestion': 
       return {...state, questionIndex: state.questionIndex + 1, answer: null}
+    case 'finnish': 
+      return {...state, status: 'finished'}
     default:
       throw new Error('Unknown action type');
   }
@@ -65,6 +68,7 @@ function App() {
         {status === 'active' && <Question question={questions[questionIndex]} dispatch={dispatch} answer={answer} 
           questionIndex={questionIndex} numQuestions={numQuestions}
           points={points} maxPoints={maxPoints}/>}
+        {status === 'finished' && <FinnishScreen points={points} maxPoints={maxPoints}/>}
       </Main>
     </div>
   );
