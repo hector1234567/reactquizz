@@ -9,7 +9,9 @@ import Question from "./Question";
 const initialState = {
   questions: [],
   status: 'loading',
-  questionIndex: 0
+  questionIndex: 0,
+  answer: null,
+  points: 0
   //loading, error, ready, active, finished
 }
 
@@ -21,13 +23,20 @@ function reducer(state, action) {
       return {...state, status: 'active'}
     case 'dataFailed': 
       return {...state, status: 'error'}
+    case 'newAnswer':
+      const question = state.questions.at(state.questionIndex);
+      return {...state, 
+        answer: action.payload,
+        points: action.payload === question.correctOption ? 
+          state.points + question.points : state.points
+      }
     default:
       throw new Error('Unknown action type');
   }
 }
 
 function App() {
-  const [{questions, status, questionIndex}, dispatch] = useReducer(reducer, initialState);
+  const [{questions, status, questionIndex, answer}, dispatch] = useReducer(reducer, initialState);
 
   const numQuestions = questions.length;
 
@@ -50,7 +59,7 @@ function App() {
         {status === 'loading' && <Loader/>}
         {status === 'error' && <Error/>}
         {status === 'ready' && <StartScreen numQuestions={numQuestions} dispatch={dispatch}/>}
-        {status === 'active' && <Question question={questions[questionIndex]}/>}
+        {status === 'active' && <Question question={questions[questionIndex]} dispatch={dispatch} answer={answer}/>}
       </Main>
     </div>
   );
