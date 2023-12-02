@@ -5,7 +5,7 @@ import Loader from "./Loader";
 import Error from "./Error";
 import StartScreen from "./StartScreen";
 import Question from "./Question";
-import FinnishScreen from "./FinnishScreen";
+import FinishScreen from "./FinishScreen";
 
 const initialState = {
   questions: [],
@@ -13,7 +13,6 @@ const initialState = {
   questionIndex: 0,
   answer: null,
   points: 0
-  //loading, error, ready, active, finished
 }
 
 function reducer(state, action) {
@@ -33,8 +32,13 @@ function reducer(state, action) {
       }
     case 'nextQuestion': 
       return {...state, questionIndex: state.questionIndex + 1, answer: null}
-    case 'finnish': 
+    case 'finish': 
       return {...state, status: 'finished'}
+    case 'restart': 
+      return {...state, status: 'active',
+      questionIndex: 0,
+      answer: null,
+      points: 0}
     default:
       throw new Error('Unknown action type');
   }
@@ -68,7 +72,7 @@ function App() {
         {status === 'active' && <Question question={questions[questionIndex]} dispatch={dispatch} answer={answer} 
           questionIndex={questionIndex} numQuestions={numQuestions}
           points={points} maxPoints={maxPoints}/>}
-        {status === 'finished' && <FinnishScreen points={points} maxPoints={maxPoints}/>}
+        {status === 'finished' && <FinishScreen points={points} maxPoints={maxPoints} dispatch={dispatch}/>}
       </Main>
     </div>
   );
