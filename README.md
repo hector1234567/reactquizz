@@ -1,1 +1,1 @@
-# React Quizz con useReducer
+# React Quiz con useReducer

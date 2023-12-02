@@ -30,6 +30,8 @@ function reducer(state, action) {
         points: action.payload === question.correctOption ? 
           state.points + question.points : state.points
       }
+    case 'nextQuestion': 
+      return {...state, questionIndex: state.questionIndex + 1, answer: null}
     default:
       throw new Error('Unknown action type');
   }
