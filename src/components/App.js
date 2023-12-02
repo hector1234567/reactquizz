@@ -38,9 +38,10 @@ function reducer(state, action) {
 }
 
 function App() {
-  const [{questions, status, questionIndex, answer}, dispatch] = useReducer(reducer, initialState);
+  const [{questions, status, questionIndex, answer, points}, dispatch] = useReducer(reducer, initialState);
 
   const numQuestions = questions.length;
+  const maxPoints = questions.reduce((acc, question) => acc + question.points, 0);
 
   useEffect(function() {
     fetch(`http://localhost:8000/questions`)
@@ -61,7 +62,9 @@ function App() {
         {status === 'loading' && <Loader/>}
         {status === 'error' && <Error/>}
         {status === 'ready' && <StartScreen numQuestions={numQuestions} dispatch={dispatch}/>}
-        {status === 'active' && <Question question={questions[questionIndex]} dispatch={dispatch} answer={answer}/>}
+        {status === 'active' && <Question question={questions[questionIndex]} dispatch={dispatch} answer={answer} 
+          questionIndex={questionIndex} numQuestions={numQuestions}
+          points={points} maxPoints={maxPoints}/>}
       </Main>
     </div>
   );
