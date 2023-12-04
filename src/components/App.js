@@ -7,12 +7,15 @@ import StartScreen from "./StartScreen";
 import Question from "./Question";
 import FinishScreen from "./FinishScreen";
 
+const SECONDS_INIT = 100;
+
 const initialState = {
   questions: [],
   status: 'loading',
   questionIndex: 0,
   answer: null,
-  points: 0
+  points: 0,
+  secondsRemaining: SECONDS_INIT
 }
 
 function reducer(state, action) {
@@ -35,17 +38,20 @@ function reducer(state, action) {
     case 'finish': 
       return {...state, status: 'finished'}
     case 'restart': 
-      return {...state, status: 'active',
-      questionIndex: 0,
-      answer: null,
-      points: 0}
+      return {...initialState, status: 'active', questions: state.questions}
+    case 'tick':
+      if(state.secondsRemaining <= 0) {
+        return {...state, status: 'finished'}
+      }
+      return {...state, 
+        secondsRemaining: state.secondsRemaining - 1}
     default:
       throw new Error('Unknown action type');
   }
 }
 
 function App() {
-  const [{questions, status, questionIndex, answer, points}, dispatch] = useReducer(reducer, initialState);
+  const [{questions, status, questionIndex, answer, points, secondsRemaining}, dispatch] = useReducer(reducer, initialState);
 
   const numQuestions = questions.length;
   const maxPoints = questions.reduce((acc, question) => acc + question.points, 0);
@@ -71,7 +77,7 @@ function App() {
         {status === 'ready' && <StartScreen numQuestions={numQuestions} dispatch={dispatch}/>}
         {status === 'active' && <Question question={questions[questionIndex]} dispatch={dispatch} answer={answer} 
           questionIndex={questionIndex} numQuestions={numQuestions}
-          points={points} maxPoints={maxPoints}/>}
+          points={points} maxPoints={maxPoints} secondsRemaining={secondsRemaining}/>}
         {status === 'finished' && <FinishScreen points={points} maxPoints={maxPoints} dispatch={dispatch}/>}
       </Main>
     </div>
